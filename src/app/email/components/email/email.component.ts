@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Email } from '../../models/email';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-email',
@@ -12,16 +13,17 @@ export class EmailComponent implements OnInit {
   @Output() remove = new EventEmitter();
   @Output() seen = new EventEmitter()
 
-  constructor() {}
+  constructor(private _location: Location) {}
 
   ngOnInit(): void { }
 
   public onRemove() {
-    this.remove.emit(this.email.id);
+    this.remove.emit(this.email.emailId);
   }
 
   public onSeen() {
     this.seen.emit(this.email)
   }
+
 
 }

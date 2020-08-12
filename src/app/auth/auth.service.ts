@@ -1,25 +1,71 @@
 import { Injectable } from '@angular/core';
 import { LoginDTO } from './models/loginDTO';
 import { RegisterDTO } from './models/registerDTO';
-import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
+import { delay, catchError, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { User } from '../users/models/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private backend = 'http://localhost:3000/';
+
   public userTestData = {
     username: 'gosho',
     email: 'gossho@mail.com',
   };
 
-  constructor() {}
+  public currentUser: User;
+
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) {
+    if (localStorage.getItem('user')) {
+      this.currentUser = JSON.parse(localStorage.getItem('user')) as User;
+
+    }
+  }
+
+  public checkServerAuth() {
+    return this.http.get(this.backend + 'users/current')
+  }
 
   public login(dto: LoginDTO) {
-    return of(this.userTestData).pipe(delay(1000));
+    return this.http.post<User>(this.backend + 'auth/login', dto).pipe(
+      tap((user) => this.setUser(user)),
+      catchError((err, caught) => {
+        this.snackBar.open(err.error.error, 'OK', {duration: 3000});
+        return throwError(err);
+      })
+    );
+  }
+
+  public getCurrentUser(userId) {
+    return this.http.post(this.backend + 'users/current', { userId });
+  }
+
+  public logout() {
+    return this.http
+      .post(this.backend + 'auth/logout', { userId: this.currentUser.id })
+      .pipe(tap(() => {
+        (this.currentUser = null);
+        localStorage.removeItem('user')
+      }));
   }
 
   public register(dto: RegisterDTO) {
-    return of(this.userTestData).pipe(delay(1000));
+    return this.http.post<User>(this.backend + 'auth/register', dto).pipe(
+      tap((user) => this.setUser(user)),
+      catchError((err) => {
+        this.snackBar.open(err.error.error, 'OK', {duration: 3000});
+        return throwError(err);
+      })
+    );
+  }
+
+  public setUser(user) {
+    this.currentUser = user;
+    localStorage.setItem('user', JSON.stringify(this.currentUser));
   }
 }

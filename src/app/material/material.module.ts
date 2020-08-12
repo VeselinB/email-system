@@ -9,20 +9,28 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import {MatBadgeModule} from '@angular/material/badge';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatRippleModule } from '@angular/material/core';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatTabsModule} from '@angular/material/tabs';
 
 
 const MODULES = [
   MatListModule,
   MatFormFieldModule,
+  MatTabsModule,
   MatProgressSpinnerModule,
   MatInputModule,
+  MatAutocompleteModule,
+  MatRippleModule,
+  MatSnackBarModule,
   MatBadgeModule,
   MatCardModule,
   MatIconModule,
   MatSidenavModule,
   MatButtonModule,
-  MatChipsModule
+  MatChipsModule,
 ];
 
 @NgModule({
